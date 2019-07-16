@@ -1,0 +1,99 @@
+<div class="container">
+  <div class="form-group">
+    <label>Images directory</label>
+    <input type="file" id="sourcePath" #source (change)="change(source)"
+           webkitdirectory class="form-control-file"/>
+    <br>
+  </div>
+
+  <div class="form-group" *ngIf="sourcePath !== ''">
+    <button (click)="list()" class="btn btn-primary">List .tif images</button>
+  </div>
+
+  <div *ngIf="step > 0">
+    <table class="table table-striped table-hover table-sm">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Path</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let path of imagesPath; let i = index">
+        <th>{{ i + 1 }}</th>
+        <td>{{ path }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="form-group">
+      <button (click)="convert()" class="btn btn-primary">
+        <span *ngIf="!converting">Convert to JPEG</span>
+        <span *ngIf="converting"><i class="fas fa-circle-notch fa-spin"></i> Converting...</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="step > 1">
+    <table class="table table-striped table-hover table-sm" *ngIf="tifToJpegResult.converted.length > 0">
+      <thead>
+      <tr>
+        <th colspan="2">Converted Success</th>
+      </tr>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Path</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let result of tifToJpegResult.converted;let i = index">
+        <th>{{ i + 1 }}</th>
+        <td>{{ result.real_file_path }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <table class="table table-striped table-hover table-sm" *ngIf="tifToJpegResult.errors.length > 0">
+      <thead>
+      <tr>
+        <th colspan="2">Converted Error</th>
+      </tr>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Path</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let result of tifToJpegResult.errors;let i = index">
+        <th>{{ i + 1 }}</th>
+        <td>{{ result }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="form-group">
+      <button (click)="crop()" class="btn btn-primary">
+        Crop images
+      </button>
+    </div>
+    <div *ngIf="cropMessage !== ''">
+      {{ cropMessage }}
+    </div>
+    <div *ngIf="outputResult.length > 0">
+      <table class="table table-striped table-hover table-sm" *ngIf="tifToJpegResult.converted.length > 0">
+        <thead>
+        <tr>
+          <th colspan="2">Crop Success</th>
+        </tr>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Path</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let result of outputResult;let i = index">
+          <th>{{ i + 1 }}</th>
+          <td>{{ result }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
