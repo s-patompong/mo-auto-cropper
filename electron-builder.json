@@ -1,5 +1,5 @@
 {
-  "productName": "angular-electron",
+  "productName": "MO Image Cropper",
   "directories": {
     "output": "release/"
   },
