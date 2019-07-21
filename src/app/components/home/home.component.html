@@ -64,9 +64,12 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let result of tifToJpegResult.converted;let i = index">
+      <tr *ngFor="let result of successConvert;let i = index">
         <th>{{ i + 1 }}</th>
         <td>{{ result.real_file_path }}</td>
+      </tr>
+      <tr *ngIf="successConvert.length === 0">
+        <td colspan="2">No success converted images.</td>
       </tr>
       </tbody>
     </table>
@@ -83,12 +86,15 @@
       <tbody>
       <tr *ngFor="let result of tifToJpegResult.errors;let i = index">
         <th>{{ i + 1 }}</th>
-        <td>{{ result }}</td>
+        <td>{{ result.error.message }}</td>
+      </tr>
+      <tr *ngIf="tifToJpegResult.errors.length === 0">
+        <td colspan="2">No error converted images.</td>
       </tr>
       </tbody>
     </table>
     <div class="form-group">
-      <button (click)="crop()" class="btn btn-primary">
+      <button (click)="crop()" class="btn btn-primary" *ngIf="successConvert.length > 0">
         Crop images
       </button>
     </div>

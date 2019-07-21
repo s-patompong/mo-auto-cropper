@@ -32,18 +32,6 @@ export class ElectronService {
 
   isElectron = () => {
     return window && window.process && window.process.type;
-  };
-
-  getAppRoot() {
-    if ( process.platform === 'win32' ) {
-      return path.join( this.remote.app.getAppPath(), '/../../../' );
-    }  else {
-      if(!AppConfig.production) {
-        return this.remote.app.getAppPath();  
-      }
-      
-      return path.dirname(this.remote.app.getAppPath());
-    }
   }
 
   pathOf(pathToJoin: string) {

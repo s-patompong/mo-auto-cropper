@@ -3,7 +3,6 @@ import { FolderService } from '../../providers/folder.service';
 import { ImageService } from '../../providers/image.service';
 import { ImageConverterService } from '../../providers/image-converter.service';
 import { basename } from 'path';
-import { DatastoreService } from '../../providers/datastore.service';
 import { ImagemagickPathService } from '../../providers/imagemagick-path.service';
 
 @Component({
@@ -30,6 +29,8 @@ export class HomeComponent implements OnInit {
   imagemagickPath = '';
   updatingImagemagickPath = false;
   updatedImagemagickPath = false;
+
+  successConvert = [];
 
   constructor(
     public folderService: FolderService,
@@ -68,12 +69,17 @@ export class HomeComponent implements OnInit {
 
   async convert() {
     this.outputResult = [];
+    this.successConvert = [];
 
     this.converting = true;
-    this.tifToJpegResult = await this.imageConverter.tifToJpg(this.imagesPath, this.jpegPath);
+    this.tifToJpegResult = await this.imageConverter.tifToJpg(this.imagesPath, this.jpegPath, this.imagemagickPath);
     for (let i = 0; i < this.tifToJpegResult.converted.length; i++) {
       this.tifToJpegResult.converted[ i ].real_file_path = this.convertedRealFilePath(this.tifToJpegResult.converted[ i ]);
       this.tifToJpegResult.converted[ i ].real_file_name = this.convertedRealFileName(this.tifToJpegResult.converted[ i ]);
+
+      if (this.tifToJpegResult.converted[ i ].success) {
+        this.successConvert.push(this.tifToJpegResult.converted[ i ]);
+      }
     }
     this.converting = false;
     this.step = 2;
@@ -81,11 +87,11 @@ export class HomeComponent implements OnInit {
 
   crop() {
     this.outputResult = [];
-    const convertedCount = this.tifToJpegResult.converted.length;
+    const convertedCount = this.successConvert.length;
 
     this.cropMessage = '';
 
-    this.tifToJpegResult.converted.forEach(converted => {
+    this.successConvert.forEach(converted => {
       console.log(`Cropping ${converted.real_file_name}`);
       const outputPath = this.imageService.autoCrop(
         converted.real_file_path,
