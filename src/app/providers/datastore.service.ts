@@ -11,11 +11,17 @@ export class DatastoreService {
 
   constructor(private electronService: ElectronService) {
     this.db = new Datastore({
-      filename: electronService.pathOf('storage/setting.db'), autoload: true
+      filename: this.dbPath(), autoload: true
     });
+
+    console.log('DB Path: ' + this.dbPath());
   }
 
   getDb() {
     return this.db;
+  }
+
+  dbPath() {
+    return this.electronService.pathOf('storage/setting.db');
   }
 }

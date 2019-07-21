@@ -121,7 +121,7 @@ export class HomeComponent implements OnInit {
     this.imagemagickPathService.update(this.imagemagickPath, (success) => {
       this.updatingImagemagickPath = false;
       this.updatedImagemagickPath = true;
-      this.getImagemagickPath();
+      this.ngOnInit();
     });
   }
 }
