@@ -1,42 +1,62 @@
-import {Component, OnInit} from '@angular/core';
-import {FolderService} from '../../providers/folder.service';
-import {ImageService} from '../../providers/image.service';
-import {ImageConverterService} from '../../providers/image-converter.service';
-import {basename} from 'path';
+import { Component, OnInit } from '@angular/core';
+import { FolderService } from '../../providers/folder.service';
+import { ImageService } from '../../providers/image.service';
+import { ImageConverterService } from '../../providers/image-converter.service';
+import { basename } from 'path';
+import { DatastoreService } from '../../providers/datastore.service';
+import { ImagemagickPathService } from '../../providers/imagemagick-path.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: [ './home.component.scss' ]
 })
 export class HomeComponent implements OnInit {
 
-  sourcePath: string = '';
-  outputPath: string = '';
-  jpegPath: string = '';
+  sourcePath = '';
+  outputPath = '';
+  jpegPath = '';
   imagesPath: string[] = [];
   outputResult: string[] = [];
 
   tifToJpegResult: any;
 
   processResult: string[] = [];
-  step: number = 0;
-  cropMessage: string = '';
+  step = 0;
+  cropMessage = '';
 
-  converting: boolean = false;
+  converting = false;
+  imagemagickPathExists = false;
+  imagemagickPath = '';
+  updatingImagemagickPath = false;
+  updatedImagemagickPath = false;
 
   constructor(
     public folderService: FolderService,
     public imageService: ImageService,
     public imageConverter: ImageConverterService,
+    public imagemagickPathService: ImagemagickPathService,
   ) {
   }
 
   ngOnInit() {
+    this.imagemagickPathService.exists(exists => {
+      this.imagemagickPathExists = exists;
+
+      if (this.imagemagickPathExists) {
+        this.getImagemagickPath();
+      }
+    });
+  }
+
+  getImagemagickPath() {
+    this.imagemagickPathService.get(value => {
+      this.imagemagickPath = value;
+    });
   }
 
   change(element: HTMLInputElement) {
-    this.sourcePath = element.files[0].path;
+    this.sourcePath = element.files[ 0 ].path;
     this.outputPath = this.sourcePath + '/output';
     this.jpegPath = this.sourcePath + '/jpeg';
   }
@@ -51,10 +71,9 @@ export class HomeComponent implements OnInit {
 
     this.converting = true;
     this.tifToJpegResult = await this.imageConverter.tifToJpg(this.imagesPath, this.jpegPath);
-    console.log(this.tifToJpegResult);
     for (let i = 0; i < this.tifToJpegResult.converted.length; i++) {
-      this.tifToJpegResult.converted[i].real_file_path = this.convertedRealFilePath(this.tifToJpegResult.converted[i]);
-      this.tifToJpegResult.converted[i].real_file_name = this.convertedRealFileName(this.tifToJpegResult.converted[i]);
+      this.tifToJpegResult.converted[ i ].real_file_path = this.convertedRealFilePath(this.tifToJpegResult.converted[ i ]);
+      this.tifToJpegResult.converted[ i ].real_file_name = this.convertedRealFileName(this.tifToJpegResult.converted[ i ]);
     }
     this.converting = false;
     this.step = 2;
@@ -66,23 +85,16 @@ export class HomeComponent implements OnInit {
 
     this.cropMessage = '';
 
-    var timeleft = 10;
-    var downloadTimer = setInterval(() => {
-      this.cropMessage = `Start cropping in ${timeleft} seconds...`;
-      timeleft -= 1;
-      if (timeleft <= 0) {
-        this.tifToJpegResult.converted.forEach(converted => {
-          console.log(`Cropping ${converted.real_file_name}`);
-          let outputPath = this.imageService.autoCrop(
-            converted.real_file_path,
-            this.outputPath,
-            converted.real_file_name,
-          );
-          this.outputResult.push(outputPath);
-          console.log(`Finished cropping ${converted.real_file_name}`);
-        });
-      }
-    }, 1000);
+    this.tifToJpegResult.converted.forEach(converted => {
+      console.log(`Cropping ${converted.real_file_name}`);
+      const outputPath = this.imageService.autoCrop(
+        converted.real_file_path,
+        this.outputPath,
+        converted.real_file_name,
+      );
+      this.outputResult.push(outputPath);
+      console.log(`Finished cropping ${converted.real_file_name}`);
+    });
 
     this.cropMessage = '';
 
@@ -95,5 +107,15 @@ export class HomeComponent implements OnInit {
 
   convertedRealFileName(converted: any) {
     return basename(converted.target) + '.jpeg';
+  }
+
+  updateImagemagickPath() {
+    this.updatedImagemagickPath = false;
+    this.updatingImagemagickPath = true;
+    this.imagemagickPathService.update(this.imagemagickPath, (success) => {
+      this.updatingImagemagickPath = false;
+      this.updatedImagemagickPath = true;
+      this.getImagemagickPath();
+    });
   }
 }

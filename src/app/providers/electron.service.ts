@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { rootPath } from 'electron-root-path';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
@@ -26,14 +27,12 @@ export class ElectronService {
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
-
-      console.log(this.getAppRoot());
     }
   }
 
   isElectron = () => {
     return window && window.process && window.process.type;
-  }
+  };
 
   getAppRoot() {
     if ( process.platform === 'win32' ) {
@@ -45,6 +44,10 @@ export class ElectronService {
       
       return path.dirname(this.remote.app.getAppPath());
     }
+  }
+
+  pathOf(pathToJoin: string) {
+    return path.join(rootPath, pathToJoin);
   }
 
 }

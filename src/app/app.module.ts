@@ -22,6 +22,7 @@ import { FileExtensionService } from './providers/file-extension.service';
 import { FolderService } from './providers/folder.service';
 import { ImageConverterService } from './providers/image-converter.service';
 import { ImageService } from './providers/image.service';
+import { DatastoreService } from './providers/datastore.service';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -53,6 +54,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FolderService,
     ImageConverterService,
     ImageService,
+    DatastoreService,
   ],
   bootstrap: [AppComponent]
 })

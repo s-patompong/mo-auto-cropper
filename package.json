@@ -84,7 +84,10 @@
     "node": ">=10.9.0"
   },
   "dependencies": {
+    "electron-root-path": "^1.0.9",
+    "eslint": "^6.1.0",
     "jimp": "^0.6.4",
+    "nedb": "^1.8.0",
     "tiff-to-png": "^2.0.1"
   }
 }

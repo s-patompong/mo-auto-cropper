@@ -51,9 +51,9 @@ function createWindow() {
 }
 
 function autocropWithMargin(image, margin) {
-  var backgroundColor = image.bitmap.data.readUInt32BE(0);
-  var originalWidth = image.bitmap.width;
-  var originalHeight = image.bitmap.height;
+  const backgroundColor = image.bitmap.data.readUInt32BE(0);
+  const originalWidth = image.bitmap.width;
+  const originalHeight = image.bitmap.height;
 
   // image = image.clone(); // uncomment this if you don't want original image to be modified
   image.autocrop();
@@ -62,7 +62,7 @@ function autocropWithMargin(image, margin) {
     return image;
   }
 
-  var canvas = new Jimp(image.bitmap.width + margin * 2, image.bitmap.height + margin * 2, backgroundColor);
+  const canvas = new Jimp(image.bitmap.width + margin * 2, image.bitmap.height + margin * 2, backgroundColor);
 
   // clear the area for the image
   canvas.scan(margin, margin, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
@@ -104,7 +104,7 @@ try {
 
       event.returnValue = arg.outputPath;
     });
-  })
+  });
 
 } catch (e) {
   // Catch Error

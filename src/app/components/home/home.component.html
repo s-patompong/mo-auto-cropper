@@ -1,13 +1,32 @@
 <div class="container">
-  <div class="form-group">
-    <label>Images directory</label>
-    <input type="file" id="sourcePath" #source (change)="change(source)"
-           webkitdirectory class="form-control-file"/>
-    <br>
+
+  <div>
+    <div class="alert alert-success" *ngIf="updatedImagemagickPath">
+      Imagemagick path updated!
+    </div>
+    <div class="form-group">
+      <label>Imagemagick convert path</label>
+      <input type="text" class="form-control" [(ngModel)]="imagemagickPath">
+    </div>
+    <div class="text-right">
+      <button class="btn btn-primary" (click)="updateImagemagickPath()">
+        <span *ngIf="!updatingImagemagickPath">Update</span>
+        <span *ngIf="updatingImagemagickPath">Updating...</span>
+      </button>
+    </div>
   </div>
 
-  <div class="form-group" *ngIf="sourcePath !== ''">
-    <button (click)="list()" class="btn btn-primary">List .tif images</button>
+  <div *ngIf="imagemagickPathExists">
+    <div class="form-group">
+      <label>Images directory</label>
+      <input type="file" id="sourcePath" #source (change)="change(source)"
+             webkitdirectory class="form-control-file"/>
+      <br>
+    </div>
+
+    <div class="form-group" *ngIf="sourcePath !== ''">
+      <button (click)="list()" class="btn btn-primary">List .tif images</button>
+    </div>
   </div>
 
   <div *ngIf="step > 0">
