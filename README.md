@@ -2,6 +2,8 @@
 
 Use this tool to crop MO images automatically.
 
+Download Imagemagick from: https://imagemagick.org/script/download.php
+
 ## Getting Started
 
 Clone this repository locally :
